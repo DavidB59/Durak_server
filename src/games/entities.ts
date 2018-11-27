@@ -6,18 +6,11 @@ type Status = 'pending' | 'started' | 'finished'
 
 @Entity()
 export class Game extends BaseEntity {
-
   @PrimaryGeneratedColumn()
   id?: number
 
   @Column('json', {default: deckOfCards})
   deckOfCards: Card[]
-
-  @Column('json', {default: []})
-  handPlayer1: Card[]
-
-  @Column('json', {default: []})
-  handPlayer2: Card[]
 
   @Column('text', {default: 'pending'})
   status: Status
@@ -46,6 +39,9 @@ export class Player extends BaseEntity {
 
   @ManyToOne(_ => Game, game => game.players)
   game: Game
+
+  @Column('json', {default: []})
+  hand: Card[]
 
   @Column()
   userId: number
