@@ -1,14 +1,8 @@
 import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, Index, OneToMany, ManyToOne } from 'typeorm'
 import User from '../users/entity'
-
-export type Symbol = 'x' | 'o'
-export type Row = [ Symbol | null, Symbol | null, Symbol | null ]
-export type Board = [ Row, Row, Row ]
+import {deckOfCards, Card} from './cards'
 
 type Status = 'pending' | 'started' | 'finished'
-
-const emptyRow: Row = [null, null, null]
-const emptyBoard: Board = [ emptyRow, emptyRow, emptyRow ]
 
 @Entity()
 export class Game extends BaseEntity {
@@ -16,26 +10,32 @@ export class Game extends BaseEntity {
   @PrimaryGeneratedColumn()
   id?: number
 
-  @Column('json', {default: emptyBoard})
-  board: Board
+  @Column('json', {default: deckOfCards})
+  deckOfCards: Card[]
 
-  @Column('char', {length:1, default: 'x'})
-  turn: Symbol
+  @Column('json', {default: []})
+  handPlayer1: Card[]
 
-  @Column('char', {length:1, nullable: true})
-  winner: Symbol
+  @Column('json', {default: []})
+  handPlayer2: Card[]
 
   @Column('text', {default: 'pending'})
   status: Status
 
+  @Column('json', {default: {}})
+  trumpCard: Card
+
+  @Column('json', {default: {}})
+  onTable: Card
+  
   // this is a relation, read more about them here:
   // http://typeorm.io/#/many-to-one-one-to-many-relations
   @OneToMany(_ => Player, player => player.game, {eager:true})
   players: Player[]
 }
-//kakoitokomentarii
+
 @Entity()
-@Index(['game', 'user', 'symbol'], {unique:true})
+@Index(['game', 'user'], {unique:true})
 export class Player extends BaseEntity {
 
   @PrimaryGeneratedColumn()
@@ -49,7 +49,4 @@ export class Player extends BaseEntity {
 
   @Column()
   userId: number
-
-  @Column('char', {length: 1})
-  symbol: Symbol
 }
