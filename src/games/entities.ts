@@ -33,7 +33,7 @@ export class Game extends BaseEntity {
   @OneToMany(_ => Player, player => player.game, {eager:true})
   players: Player[]
 }
-
+//kakoitokomentarii
 @Entity()
 @Index(['game', 'user', 'symbol'], {unique:true})
 export class Player extends BaseEntity {
