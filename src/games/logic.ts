@@ -19,7 +19,7 @@ export const newGame = () => {
 export const attack = (game: Game, player: Player, card: Card) => {
   if (game.onTable) throw new Error("table is not empty")
 
-  const playerCardIndex = player.hand.findIndex(handCard => handCard == card)
+  const playerCardIndex = player.hand.findIndex(handCard => handCard === card)
   const playerCard = player.hand.slice(playerCardIndex)[0]
 
   game.onTable = playerCard
@@ -62,6 +62,12 @@ export const canDefend = (game: Game, player: Player) => {
   })
 }
 
+export const addCardFromTableToPlayer = (game: Game, player: Player) => {
+  if (canDefend.length === 0) {
+    player.hand.push(game.onTable)
+  }
+
+}
 
 
 export const takeCards = (game: Game) => {
