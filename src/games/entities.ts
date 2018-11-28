@@ -16,7 +16,7 @@ export class Game extends BaseEntity {
   status: Status
 
   @Column('json', {default: {}})
-  trumpCard: Card | undefined
+  trumpCard: Card
 
   @Column('json', {default: {}})
   onTable: Card
