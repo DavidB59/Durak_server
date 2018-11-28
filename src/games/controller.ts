@@ -8,6 +8,7 @@ import { } from './logic'
 import { deckOfCards } from './cards'
 import { Validate } from 'class-validator'
 import {io} from '../index'
+import { Card} from './cards'
 
 
 @JsonController()
@@ -24,13 +25,18 @@ export default class GameController {
     const entity = await Game.create()
     const shuffledDeck = deckOfCards()
     entity.deckOfCards = shuffledDeck
-    entity.trumpCard = entity.deckOfCards.slice(1)[0]
+    entity.trumpCard = entity.deckOfCards.pop()
     entity.save()
 
-    await Player.create({
+    const newHand : Card[] | undefined[]= []
+    for (let i = 0; i < 6; i++) {
+    newHand[i] = entity.deckOfCards.pop()
+    }
+
+      await Player.create({
       game: entity, 
       user,
-      hand : []
+      hand : newHand
     }).save()
     
     const game = await Game.findOneById(entity.id)
@@ -57,10 +63,15 @@ export default class GameController {
     game.status = 'started'
     await game.save()
 
+    const newHand : Card[] | undefined[]= []
+    for (let i = 0; i < 6; i++) {
+    newHand[i] = game.deckOfCards.pop()
+    }
+
     const player = await Player.create({
       game, 
       user,
-      hand :[]
+      hand : newHand
     }).save()
 
     io.emit('action', {
@@ -135,5 +146,9 @@ export default class GameController {
   getPlayers() {
     return Player.find()
   }
+
+
+
+
 }
 
