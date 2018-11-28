@@ -1,6 +1,6 @@
 import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, Index, OneToMany, ManyToOne } from 'typeorm'
 import User from '../users/entity'
-import {deckOfCards, Card} from './cards'
+import {cards, Card} from './cards'
 
 type Status = 'pending' | 'started' | 'finished'
 
@@ -8,8 +8,8 @@ type Status = 'pending' | 'started' | 'finished'
 export class Game extends BaseEntity {
   @PrimaryGeneratedColumn()
   id?: number
-
-  @Column('json', {default: deckOfCards})
+//, {default: deckOfCards}
+  @Column('json', {default: cards})
   deckOfCards: Card[]
 
   @Column('text', {default: 'pending'})
@@ -40,7 +40,8 @@ export class Player extends BaseEntity {
   @ManyToOne(_ => Game, game => game.players)
   game: Game
 
-  @Column('json', {default: []})
+  // , {default: []}
+  @Column('json', { nullable:true })
   hand: Card[]
 
   @Column()
