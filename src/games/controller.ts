@@ -26,11 +26,13 @@ export default class GameController {
     const shuffledDeck = deckOfCards()
     entity.deckOfCards = shuffledDeck
     entity.trumpCard = entity.deckOfCards.pop()
-    entity.save()
 
     const newHand : Card[] | undefined[]= []
     for (let i = 0; i < 6; i++) {
     newHand[i] = entity.deckOfCards.pop()
+    
+    await entity.save()
+
     }
 
       await Player.create({
