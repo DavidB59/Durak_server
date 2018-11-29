@@ -1,25 +1,23 @@
-import { 
-  JsonController, Authorized, CurrentUser, Post, Param, BadRequestError, HttpCode, NotFoundError, ForbiddenError, Get, 
-  Body, Patch 
+import {
+  JsonController, Authorized, CurrentUser, Post, Param, BadRequestError, HttpCode, NotFoundError, ForbiddenError, Get,
+  Body, Patch
 } from 'routing-controllers'
 import User from '../users/entity'
 import { Game, Player } from './entities'
 import { } from './logic'
 import { deckOfCards } from './cards'
 import { Validate } from 'class-validator'
-import {io} from '../index'
-import { Card} from './cards'
+import { io } from '../index'
+import { Card } from './cards'
+import { attack, canDefend, defend, takeCardFromTable, takeCards, isFinished} from './logic'
 
 
 @JsonController()
 export default class GameController {
-
   @Authorized()
   @Post('/games')
   @HttpCode(201)
   async createGame(
-
-
     @CurrentUser() user: User
   ) {
     const entity = await Game.create()
@@ -27,20 +25,18 @@ export default class GameController {
     entity.deckOfCards = shuffledDeck
     entity.trumpCard = entity.deckOfCards[0]
 
-    const newHand : Card[] | undefined[]= []
+    const newHand: Card[] | undefined[] = []
     for (let i = 0; i < 6; i++) {
-    newHand[i] = entity.deckOfCards.pop()
-    
-    await entity.save()
-
+      newHand[i] = entity.deckOfCards.pop()
+      await entity.save()
     }
 
-      await Player.create({
-      game: entity, 
+    await Player.create({
+      game: entity,
       user,
-      hand : newHand
+      hand: newHand
     }).save()
-    
+
     const game = await Game.findOneById(entity.id)
 
     io.emit('action', {
@@ -65,15 +61,15 @@ export default class GameController {
     game.status = 'started'
     await game.save()
 
-    const newHand : Card[] | undefined[]= []
+    const newHand: Card[] | undefined[] = []
     for (let i = 0; i < 6; i++) {
-    newHand[i] = game.deckOfCards.pop()
+      newHand[i] = game.deckOfCards.pop()
     }
 
     const player = await Player.create({
-      game, 
+      game,
       user,
-      hand : newHand
+      hand: newHand
     }).save()
 
     io.emit('action', {
@@ -83,6 +79,8 @@ export default class GameController {
 
     return player
   }
+
+ 
 
   // // @Authorized()
   // // the reason that we're using patch here is because this request is not idempotent
@@ -119,7 +117,7 @@ export default class GameController {
   //   // }
   //   // game.board = update.board
   //   // await game.save()
-    
+
   //   // io.emit('action', {
   //   //   type: 'UPDATE_GAME',
   //   //   payload: game
@@ -136,6 +134,132 @@ export default class GameController {
     return Game.findOneById(id)
   }
 
+  @Authorized()
+  @Patch('/games/:id([0-9]+)/attack')
+  async attack(
+    @CurrentUser() user: User,
+    @Param('id') gameId: number,
+    @Body() card: Card,
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new NotFoundError(`Game does not exist`)
+
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+    
+    attack(game, player, card)
+
+    switch(game.turn) {
+      case 0: game.turn = 1
+      break
+      case 1: game.turn = 0
+    }
+
+    await game.save()
+    
+    // todo
+    // io.emit('action', {
+    //   type: 'UPDATE_GAME',
+    //   payload: game
+    // })
+
+    // return game
+
+  }
+
+  @Authorized()
+  @Get('/games/:id([0-9]+)/cards-to-defend')
+  async cardsToDefend(
+    @CurrentUser() user: User,
+    @Param('id') gameId: number,
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new NotFoundError(`Game does not exist`)
+
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+    return canDefend(game, player)
+
+    //todo
+    // io.emit('action', {
+    //   type: 'UPDATE_GAME',
+    //   payload: game
+    // })
+
+    // return game
+  }
+
+  @Authorized()
+  @Patch('/games/:id([0-9]+)/defend')
+  async defend(
+    @CurrentUser() user: User,
+    @Param('id') gameId: number,
+    @Body() card: Card,
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new NotFoundError(`Game does not exist`)
+
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+    try {
+      defend(game, player, card) 
+    }
+    catch { 
+      takeCardFromTable(game, player)
+    }
+     
+    switch (game.turn) {
+      case 0: game.turn = 1
+        break
+      case 1: game.turn = 0
+    }
+
+    await game.save()
+
+    //todo
+    // io.emit('action', {
+    //   type: 'UPDATE_GAME',
+    //   payload: game
+    // })
+
+    // return game
+
+  }
+
+  @Authorized()
+  @Patch('/games/:id([0-9]+)/defend')
+  async takeCards (
+    @CurrentUser() user: User,
+    @Param('id') gameId: number,
+  ) {
+    const game = await Game.findOneById(gameId)
+    if (!game) throw new NotFoundError(`Game does not exist`)
+
+    const player = await Player.findOne({ user, game })
+
+    if (!player) throw new ForbiddenError(`You are not part of this game`)
+    if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+
+    takeCards(game)
+
+    await game.save()
+
+    //todo
+    // io.emit('action', {
+    //   type: 'UPDATE_GAME',
+    //   payload: game
+    // })
+
+    // return game
+
+  }
+
   // @Authorized()
   @Get('/games')
   getGames() {
@@ -148,9 +272,4 @@ export default class GameController {
   getPlayers() {
     return Player.find()
   }
-
-
-
-
 }
-

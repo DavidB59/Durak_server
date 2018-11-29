@@ -21,6 +21,9 @@ export class Game extends BaseEntity {
   @Column('json', {default: {}})
   onTable: Card
   
+  @Column('number', {default: 0})
+  turn: 0 | 1
+
   // this is a relation, read more about them here:
   // http://typeorm.io/#/many-to-one-one-to-many-relations
   @OneToMany(_ => Player, player => player.game, {eager:true})
