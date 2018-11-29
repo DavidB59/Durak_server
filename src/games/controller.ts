@@ -6,7 +6,7 @@ import User from '../users/entity'
 import { Game, Player } from './entities'
 import { } from './logic'
 import { deckOfCards } from './cards'
-import { Validate } from 'class-validator'
+//import { Validate } from 'class-validator'
 import { io } from '../index'
 import { Card } from './cards'
 import { attack, canDefend, defend, takeCardFromTable, takeCards, isFinished} from './logic'
@@ -162,11 +162,11 @@ export default class GameController {
     await player.save()
     
     
-    // todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+    //todo
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
     console.log(game)
     return game
   }
@@ -187,12 +187,12 @@ export default class GameController {
     return canDefend(game, player)
 
     //todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+  //   io.emit('action', {
+  //     type: 'UPDATE_GAME',
+  //     payload: game
+  //   })
 
-  //return game
+  // return game
   }
 
   @Authorized()
