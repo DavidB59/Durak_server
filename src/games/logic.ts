@@ -20,22 +20,13 @@ export const attack = (game: Game, player: Player, cardCode) => {
   if (game.onTable.length > 0) throw new Error("table is not empty")
 
   const playerCardIndex = player.hand.findIndex(handCard => {
-    // console.log('====', handCard.code, cardCode)
-    // return handCard.code == cardCode
-     return handCard.code == cardCode.cardCode
+    return handCard.code == cardCode.cardCode
   })
-  player.hand.forEach(handCard => console.log (handCard.code))
+  player.hand.forEach(handCard => console.log(handCard.code))
 
-  const playerCard : Card = player.hand.splice(playerCardIndex, 1)[0]
-  console.log('=========playerCardIndex=======' , playerCardIndex)
-  console.log('=========CardCode=======', cardCode)
+  const playerCard: Card = player.hand.splice(playerCardIndex, 1)[0]
 
-  console.log('<===========>',player.hand)
-  game.onTable.push(playerCard) 
-  console.log('===========>', game.onTable) 
-
-  // player.save()
-  // game.save()
+  game.onTable.push(playerCard)
 }
 
 // canDefend returns an arary of cards which possibly can be used for defense.
@@ -70,6 +61,7 @@ export const defend = (game: Game, player: Player, cardCode) => {
 
 export const takeCardFromTable = (game: Game, player: Player) => {
   player.hand.push(game.onTable[0])
+  game.onTable = []
 }
 
 export const takeCards = (game: Game) => {
