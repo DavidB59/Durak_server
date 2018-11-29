@@ -16,13 +16,19 @@ import { Card } from './cards'
 //   return game.save
 // }
 
-export const attack = (game: Game, player: Player, card: Card) => {
-  if (game.onTable) throw new Error("table is not empty")
+export const attack = (game: Game, player: Player, cardCode : Card["code"]) => {
+  if (game.onTable.length > 0) throw new Error("table is not empty")
 
-  const playerCardIndex = player.hand.findIndex(handCard => handCard === card)
-  const playerCard = player.hand.splice(playerCardIndex, 1)[0]
+  const playerCardIndex = player.hand.findIndex(handCard => handCard.code == cardCode)
+  player.hand.forEach(handCard => console.log (handCard.code))
 
-  game.onTable = playerCard
+  const playerCard : Card = player.hand.splice(playerCardIndex, 1)[0]
+  console.log('=========playerCardIndex=======' , playerCardIndex)
+  console.log('=========CardCode=======', cardCode)
+
+  console.log('<===========>',player.hand)
+  game.onTable.push(playerCard) 
+  console.log('===========>', game.onTable) 
 
   // player.save()
   // game.save()
@@ -33,10 +39,10 @@ export const canDefend = (game: Game, player: Player) => {
   if (!game.onTable) throw new Error("table is empty")
 
   return player.hand.filter(card => {
-    if ((game.onTable.suit != card.suit) && (card.suit != game.trumpCard.suit)) {
+    if ((game.onTable[0].suit != card.suit) && (card.suit != game.trumpCard.suit)) {
       // suits do not match AND player card is not trump
       return false
-    } else if ((game.onTable.value && card.value) && game.onTable.value >= card.value) {
+    } else if ((game.onTable[0].value && card.value) && game.onTable[0].value >= card.value) {
       // card on table is of a bigger value than player's card
       return false
     }
@@ -50,13 +56,13 @@ export const defend = (game: Game, player: Player, card: Card) => {
 
   const playerCardIndex = player.hand.findIndex(handCard => handCard === card)
   player.hand.splice(playerCardIndex, 1)[0]
-  game.onTable = {}
+  game.onTable = []
   // player.save()
   // game.save()
 }
 
 export const takeCardFromTable = (game: Game, player: Player) => {
-  player.hand.push(game.onTable)
+  player.hand.push(game.onTable[0])
 }
 
 export const takeCards = (game: Game) => {
