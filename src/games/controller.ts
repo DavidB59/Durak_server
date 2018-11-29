@@ -59,12 +59,12 @@ export default class GameController {
     if (game.status !== 'pending') throw new BadRequestError(`Game is already started`)
 
     game.status = 'started'
-    await game.save()
 
     const newHand: Card[] | undefined[] = []
     for (let i = 0; i < 6; i++) {
       newHand[i] = game.deckOfCards.pop()
     }
+    await game.save()
 
     const player = await Player.create({
       game,
@@ -158,8 +158,9 @@ export default class GameController {
       case 1: game.turn = 0
     }
 
-    await player.save()
     await game.save()
+    await player.save()
+    
     
     // todo
     // io.emit('action', {
@@ -170,7 +171,7 @@ export default class GameController {
     return game
   }
 
-  // @Authorized()
+  @Authorized()
   @Get('/games/:id([0-9]+)/cards-to-defend')
   async cardsToDefend(
     @CurrentUser() user: User,
@@ -191,15 +192,15 @@ export default class GameController {
     //   payload: game
     // })
 
-    // return game
+  //return game
   }
 
-  // @Authorized()
+  @Authorized()
   @Patch('/games/:id([0-9]+)/defend')
   async defend(
     @CurrentUser() user: User,
     @Param('id') gameId: number,
-    @Body() card: Card,
+    @Body() cardCode,
   ) {
     const game = await Game.findOneById(gameId)
     if (!game) throw new NotFoundError(`Game does not exist`)
@@ -208,19 +209,24 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+    
+    
     try {
-      defend(game, player, card) 
+      defend(game, player, cardCode) 
     }
     catch { 
       takeCardFromTable(game, player)
+
+      switch (game.turn) {
+        case 0: game.turn = 1
+          break
+        case 1: game.turn = 0
+      }
     }
      
-    switch (game.turn) {
-      case 0: game.turn = 1
-        break
-      case 1: game.turn = 0
-    }
+    
 
+    await player.save()
     await game.save()
 
     //todo
@@ -229,12 +235,12 @@ export default class GameController {
     //   payload: game
     // })
 
-    // return game
+    return game
 
   }
 
   // @Authorized()
-  @Patch('/games/:id([0-9]+)/defend')
+  @Patch('/games/:id([0-9]+)/takeCards') //  TO CHANGE
   async takeCards (
     @CurrentUser() user: User,
     @Param('id') gameId: number,
@@ -248,8 +254,10 @@ export default class GameController {
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
 
     takeCards(game)
-    await player.save()
     await game.save()
+    await game.players[0].save()
+    await game.players[1].save()
+    // await player.save()
 
     //todo
     // io.emit('action', {
@@ -257,7 +265,7 @@ export default class GameController {
     //   payload: game
     // })
 
-    // return game
+    return game
 
   }
 
