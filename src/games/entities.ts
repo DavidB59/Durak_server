@@ -18,8 +18,8 @@ export class Game extends BaseEntity {
   @Column('json', {default: {}})
   trumpCard: Card
 
-  @Column('json', {default: {}})
-  onTable: Card
+  @Column('json', {default: []})
+  onTable: Card[]
   
   @Column('int', {default: 0})
   turn: 0 | 1

@@ -126,7 +126,7 @@ export default class GameController {
   //   // return game
   // }
 
-  @Authorized()
+  // @Authorized()
   @Get('/games/:id([0-9]+)')
   getGame(
     @Param('id') id: number
@@ -139,8 +139,9 @@ export default class GameController {
   async attack(
     @CurrentUser() user: User,
     @Param('id') gameId: number,
-    @Body() card: Card,
+    @Body() cardCode,
   ) {
+    console.log('Did we get called?')
     const game = await Game.findOneById(gameId)
     if (!game) throw new NotFoundError(`Game does not exist`)
 
@@ -149,7 +150,7 @@ export default class GameController {
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     
-    attack(game, player, card)
+    attack(game, player, cardCode)
 
     switch(game.turn) {
       case 0: game.turn = 1
@@ -157,6 +158,7 @@ export default class GameController {
       case 1: game.turn = 0
     }
 
+    await player.save()
     await game.save()
     
     // todo
@@ -164,12 +166,11 @@ export default class GameController {
     //   type: 'UPDATE_GAME',
     //   payload: game
     // })
-
-    // return game
-
+    console.log(game)
+    return game
   }
 
-  @Authorized()
+  // @Authorized()
   @Get('/games/:id([0-9]+)/cards-to-defend')
   async cardsToDefend(
     @CurrentUser() user: User,
@@ -193,7 +194,7 @@ export default class GameController {
     // return game
   }
 
-  @Authorized()
+  // @Authorized()
   @Patch('/games/:id([0-9]+)/defend')
   async defend(
     @CurrentUser() user: User,
@@ -232,7 +233,7 @@ export default class GameController {
 
   }
 
-  @Authorized()
+  // @Authorized()
   @Patch('/games/:id([0-9]+)/defend')
   async takeCards (
     @CurrentUser() user: User,
@@ -247,7 +248,7 @@ export default class GameController {
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
 
     takeCards(game)
-
+    await player.save()
     await game.save()
 
     //todo
