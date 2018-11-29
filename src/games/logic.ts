@@ -54,15 +54,18 @@ export const canDefend = (game: Game, player: Player) => {
   })
 }
 
-export const defend = (game: Game, player: Player, card: Card) => {
+export const defend = (game: Game, player: Player, cardCode) => {
   const cardsToDefend = canDefend(game, player)
   if (cardsToDefend.length === 0) throw new Error("you cann't defend")
 
-  const playerCardIndex = player.hand.findIndex(handCard => handCard === card)
+  const playerCardIndex = player.hand.findIndex(handCard => handCard.code == cardCode.cardCode)
+  console.log('jhfjhfghfhgf')
   player.hand.splice(playerCardIndex, 1)[0]
+  console.log('============')
   game.onTable = []
   // player.save()
   // game.save()
+
 }
 
 export const takeCardFromTable = (game: Game, player: Player) => {
