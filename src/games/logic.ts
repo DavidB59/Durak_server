@@ -16,10 +16,14 @@ import { Card } from './cards'
 //   return game.save
 // }
 
-export const attack = (game: Game, player: Player, cardCode : Card["code"]) => {
+export const attack = (game: Game, player: Player, cardCode) => {
   if (game.onTable.length > 0) throw new Error("table is not empty")
 
-  const playerCardIndex = player.hand.findIndex(handCard => handCard.code == cardCode)
+  const playerCardIndex = player.hand.findIndex(handCard => {
+    // console.log('====', handCard.code, cardCode)
+    // return handCard.code == cardCode
+     return handCard.code == cardCode.cardCode
+  })
   player.hand.forEach(handCard => console.log (handCard.code))
 
   const playerCard : Card = player.hand.splice(playerCardIndex, 1)[0]

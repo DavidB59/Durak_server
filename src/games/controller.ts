@@ -139,7 +139,7 @@ export default class GameController {
   async attack(
     @CurrentUser() user: User,
     @Param('id') gameId: number,
-    @Body() cardCode: Card["code"],
+    @Body() cardCode,
   ) {
     console.log('Did we get called?')
     const game = await Game.findOneById(gameId)
