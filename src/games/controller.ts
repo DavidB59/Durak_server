@@ -161,7 +161,6 @@ export default class GameController {
     await game.save()
     await player.save()
     
-    
     //todo
     io.emit('action', {
       type: 'UPDATE_GAME',
@@ -226,20 +225,21 @@ export default class GameController {
      
     
 
-    await player.save()
     await game.save()
-
+    await player.save()
+    // await game.players[0].save()
+    // await game.players[1].save()
     //todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
 
     return game
 
   }
 
-  // @Authorized()
+  @Authorized()
   @Patch('/games/:id([0-9]+)/takeCards') //  TO CHANGE
   async takeCards (
     @CurrentUser() user: User,
