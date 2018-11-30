@@ -82,50 +82,6 @@ export default class GameController {
 
  
 
-  // // @Authorized()
-  // // the reason that we're using patch here is because this request is not idempotent
-  // // http://restcookbook.com/HTTP%20Methods/idempotency/
-  // // try to fire the same requests twice, see what happens
-  // // @Patch('/games/:id([0-9]+)')
-  // // async updateGame(
-  // //   @CurrentUser() user: User,
-  // //   @Param('id') gameId: number,
-  // //   @Body() update: GameUpdate
-  // // ) {
-  // //   const game = await Game.findOneById(gameId)
-  // //   if (!game) throw new NotFoundError(`Game does not exist`)
-
-  // //   const player = await Player.findOne({ user, game })
-
-  // //   if (!player) throw new ForbiddenError(`You are not part of this game`)
-  // //   if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-  // //   if (player.symbol !== game.turn) throw new BadRequestError(`It's not your turn`)
-  // //   if (!isValidTransition(player.symbol, game.board, update.board)) {
-  // //     throw new BadRequestError(`Invalid move`)
-  // //   }    
-
-  //   // const winner = calculateWinner(update.board)
-  //   // if (winner) {
-  //   //   game.winner = winner
-  //   //   game.status = 'finished'
-  //   // }
-  //   // else if (finished(update.board)) {
-  //   //   game.status = 'finished'
-  //   // }
-  //   // else {
-  //   //   game.turn = player.symbol === 'x' ? 'o' : 'x'
-  //   // }
-  //   // game.board = update.board
-  //   // await game.save()
-
-  //   // io.emit('action', {
-  //   //   type: 'UPDATE_GAME',
-  //   //   payload: game
-  //   // })
-
-  //   // return game
-  // }
-
   // @Authorized()
   @Get('/games/:id([0-9]+)')
   getGame(
@@ -149,8 +105,13 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
+<<<<<<< HEAD
 
     const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
+=======
+    
+    const gamePlayer = (game.players[0].id === player.id ? game.players[0] : game.players[1])
+>>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
 
     attack(game, gamePlayer, cardCode)
 
@@ -160,11 +121,15 @@ export default class GameController {
       case 1: game.turn = 0
     }
 
+<<<<<<< HEAD
 
 
 
+=======
+    await gamePlayer.save()
+>>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     await game.save()
-    await player.save()
+    // await player.save() // NOT SURE   NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE 
     
     //todo
     io.emit('action', {
@@ -214,13 +179,18 @@ export default class GameController {
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     
+<<<<<<< HEAD
     const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
     
+=======
+    const gamePlayer = (game.players[0].id === player.id ? game.players[0] : game.players[1])
+
+>>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     try {
       defend(game, gamePlayer, cardCode) 
     }
     catch { 
-      takeCardFromTable(game, player)
+      takeCardFromTable(game, gamePlayer)
 
       switch (game.turn) {
         case 0: game.turn = 1
@@ -228,10 +198,14 @@ export default class GameController {
         case 1: game.turn = 0
       }
     }
+<<<<<<< HEAD
 
+=======
+     
+    
+>>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     await gamePlayer.save()
     await game.save()
-    await player.save()
     // await game.players[0].save()
     // await game.players[1].save()
     //todo
@@ -241,7 +215,12 @@ export default class GameController {
     // })
 
     return game
+<<<<<<< HEAD
   }
+=======
+
+    }
+>>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
 
   @Authorized()
   @Patch('/games/:id([0-9]+)/takeCards') //  TO CHANGE
@@ -264,10 +243,10 @@ export default class GameController {
     // await player.save()
 
     //todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
 
     return game
 
