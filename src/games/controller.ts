@@ -9,7 +9,7 @@ import { deckOfCards } from './cards'
 //import { Validate } from 'class-validator'
 import { io } from '../index'
 import { Card } from './cards'
-import { attack, canDefend, defend, takeCardFromTable, takeCards, isFinished} from './logic'
+import { attack, canDefend, defend, takeCardFromTable, takeCards} from './logic'
 
 
 @JsonController()
