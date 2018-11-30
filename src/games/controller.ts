@@ -235,10 +235,10 @@ export default class GameController {
     // await game.players[0].save()
     // await game.players[1].save()
     //todo
-    io.emit('action', {
-      type: 'UPDATE_GAME',
-      payload: game
-    })
+    // io.emit('action', {
+    //   type: 'UPDATE_GAME',
+    //   payload: game
+    // })
 
     return game
   }
