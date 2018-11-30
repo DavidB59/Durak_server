@@ -149,14 +149,19 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-    
-    attack(game, player, cardCode)
+
+    const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
+
+    attack(game, gamePlayer, cardCode)
 
     switch(game.turn) {
       case 0: game.turn = 1
       break
       case 1: game.turn = 0
     }
+
+
+
 
     await game.save()
     await player.save()
@@ -209,9 +214,10 @@ export default class GameController {
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     
+    const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
     
     try {
-      defend(game, player, cardCode) 
+      defend(game, gamePlayer, cardCode) 
     }
     catch { 
       takeCardFromTable(game, player)
@@ -222,9 +228,8 @@ export default class GameController {
         case 1: game.turn = 0
       }
     }
-     
-    
 
+    await gamePlayer.save()
     await game.save()
     await player.save()
     // await game.players[0].save()
@@ -236,7 +241,6 @@ export default class GameController {
     })
 
     return game
-
   }
 
   @Authorized()
