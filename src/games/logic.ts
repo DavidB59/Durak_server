@@ -51,9 +51,13 @@ export const defend = (game: Game, player: Player, cardCode) => {
 
   const playerCardIndex = player.hand.findIndex(handCard => handCard.code == cardCode.cardCode)
   console.log('jhfjhfghfhgf')
-  player.hand.splice(playerCardIndex, 1)[0]
-  console.log('============')
-  game.onTable = []
+  if (cardsToDefend.includes(player.hand[playerCardIndex])){
+    player.hand.splice(playerCardIndex, 1)[0]
+    console.log('=====CardsTodefends======='+cardsToDefend)
+    console.log('=====cards I played======='+player.hand[playerCardIndex])
+    game.onTable = []
+  }
+ else throw new Error("this card cannot be played")
   // player.save()
   // game.save()
 

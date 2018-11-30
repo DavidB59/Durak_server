@@ -6,7 +6,7 @@ import User from '../users/entity'
 import { Game, Player } from './entities'
 import { } from './logic'
 import { deckOfCards } from './cards'
-import { Validate } from 'class-validator'
+//import { Validate } from 'class-validator'
 import { io } from '../index'
 import { Card } from './cards'
 import { attack, canDefend, defend, takeCardFromTable, takeCards, isFinished} from './logic'
@@ -159,16 +159,19 @@ export default class GameController {
       break
       case 1: game.turn = 0
     }
-    
-    await gamePlayer.save()
+
+
+
+
     await game.save()
-
-    // todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
-
+    await player.save()
+    
+    //todo
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
+    console.log(game)
     return game
   }
 
@@ -188,12 +191,12 @@ export default class GameController {
     return canDefend(game, player)
 
     //todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+  //   io.emit('action', {
+  //     type: 'UPDATE_GAME',
+  //     payload: game
+  //   })
 
-  //return game
+  // return game
   }
 
   @Authorized()
@@ -228,17 +231,19 @@ export default class GameController {
 
     await gamePlayer.save()
     await game.save()
-
+    await player.save()
+    // await game.players[0].save()
+    // await game.players[1].save()
     //todo
-    // io.emit('action', {
-    //   type: 'UPDATE_GAME',
-    //   payload: game
-    // })
+    io.emit('action', {
+      type: 'UPDATE_GAME',
+      payload: game
+    })
 
     return game
   }
 
-  // @Authorized()
+  @Authorized()
   @Patch('/games/:id([0-9]+)/takeCards') //  TO CHANGE
   async takeCards (
     @CurrentUser() user: User,
