@@ -25,9 +25,9 @@ export default class GameController {
     entity.deckOfCards = shuffledDeck
     entity.trumpCard = entity.deckOfCards[0]
 
-    const newHand: Card[] | undefined[] = []
+    const newHand: Card[] = []
     for (let i = 0; i < 6; i++) {
-      newHand[i] = entity.deckOfCards.pop()
+      newHand[i] = <Card> entity.deckOfCards.pop()
       await entity.save()
     }
 
@@ -60,9 +60,9 @@ export default class GameController {
 
     game.status = 'started'
 
-    const newHand: Card[] | undefined[] = []
+    const newHand: Card[] = []
     for (let i = 0; i < 6; i++) {
-      newHand[i] = game.deckOfCards.pop()
+      newHand[i] = <Card> game.deckOfCards.pop()
     }
     await game.save()
 

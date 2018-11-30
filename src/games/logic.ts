@@ -42,7 +42,7 @@ export const canDefend = (game: Game, player: Player) => {
       else if (card.suit == game.trumpCard.suit)
       { return true }
     
-    } else if ((game.onTable[0].value && card.value) && game.onTable[0].value >= card.value) {
+    } else if ((game.onTable[0].value && card.value) && <number>game.onTable[0].value >= card.value) {
       // card on table is of a bigger value than player's card
       return false
     }
