@@ -9,7 +9,7 @@ import { deckOfCards } from './cards'
 //import { Validate } from 'class-validator'
 import { io } from '../index'
 import { Card } from './cards'
-import { attack, canDefend, defend, takeCardFromTable, takeCards} from './logic'
+import { attack, canDefend, defend, takeCardFromTable, takeCards, isFinished} from './logic'
 
 
 @JsonController()
@@ -119,13 +119,28 @@ export default class GameController {
     await gamePlayer.save()
     await game.save()
     // await player.save() // NOT SURE   NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE 
-    
-    //todo
+   if ( isFinished(game)===undefined){
     io.emit('action', {
       type: 'UPDATE_GAME',
       payload: game
     })
-    console.log(game)
+
+   } 
+   else if (isFinished(game)===game.players[0]){
+    io.emit('action', {
+      type: 'WINNER',
+      payload: game.players[0]
+    })
+
+   }
+   else if (isFinished(game)===game.players[1]){
+    io.emit('action', {
+      type: 'WINNER',
+      payload: game.players[1]
+    })
+   }
+    //todo
+
     return game
   }
 
