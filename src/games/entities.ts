@@ -44,8 +44,8 @@ export class Player extends BaseEntity {
   game: Game
 
   // , {default: []}
-  // @Column('json', { nullable:true })
-  // hand: Card[]
+  @Column('json', { nullable:true })
+  hand: Card[]
 
   @Column()
   userId: number
