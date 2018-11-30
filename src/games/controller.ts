@@ -105,13 +105,8 @@ export default class GameController {
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-<<<<<<< HEAD
-
-    const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
-=======
     
     const gamePlayer = (game.players[0].id === player.id ? game.players[0] : game.players[1])
->>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
 
     attack(game, gamePlayer, cardCode)
 
@@ -121,13 +116,7 @@ export default class GameController {
       case 1: game.turn = 0
     }
 
-<<<<<<< HEAD
-
-
-
-=======
     await gamePlayer.save()
->>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     await game.save()
     // await player.save() // NOT SURE   NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE  NOT SURE 
     
@@ -179,13 +168,8 @@ export default class GameController {
     if (!player) throw new ForbiddenError(`You are not part of this game`)
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
     
-<<<<<<< HEAD
-    const gamePlayer = game.players[0].id === player.id ? game.players[0] : game.players[1]
-    
-=======
     const gamePlayer = (game.players[0].id === player.id ? game.players[0] : game.players[1])
 
->>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     try {
       defend(game, gamePlayer, cardCode) 
     }
@@ -198,12 +182,8 @@ export default class GameController {
         case 1: game.turn = 0
       }
     }
-<<<<<<< HEAD
-
-=======
      
     
->>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
     await gamePlayer.save()
     await game.save()
     // await game.players[0].save()
@@ -215,12 +195,8 @@ export default class GameController {
     // })
 
     return game
-<<<<<<< HEAD
-  }
-=======
 
     }
->>>>>>> c810956a05be30e11b21731c1636c3db9fa1ad7f
 
   @Authorized()
   @Patch('/games/:id([0-9]+)/takeCards') //  TO CHANGE

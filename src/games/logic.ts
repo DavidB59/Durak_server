@@ -34,9 +34,14 @@ export const canDefend = (game: Game, player: Player) => {
   if (!game.onTable) throw new Error("table is empty")
 
   return player.hand.filter(card => {
-    if ((game.onTable[0].suit != card.suit) && (card.suit != game.trumpCard.suit)) {
+    if ((game.onTable[0].suit != card.suit) ) {
       // suits do not match AND player card is not trump
-      return false
+      if (card.suit != game.trumpCard.suit) {
+        return false
+      }
+      else if (card.suit == game.trumpCard.suit)
+      { return true }
+    
     } else if ((game.onTable[0].value && card.value) && game.onTable[0].value >= card.value) {
       // card on table is of a bigger value than player's card
       return false
