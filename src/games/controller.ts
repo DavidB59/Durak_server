@@ -160,27 +160,44 @@ export default class GameController {
     @Param('id') gameId: number,
     @Body() cardCode,
   ) {
+    console.log('<===========================> FIRST FIRST FIRST  <===========================>')
     const game = await Game.findOneById(gameId)
+    console.log('<===========================> SECOND SECOND  <===========================>')
+
     if (!game) throw new NotFoundError(`Game does not exist`)
+    console.log('<===========================> THIRD THIRD  <===========================>')
 
     const player = await Player.findOne({ user, game })
+    console.log('<===========================> FOURTH FOURTH  <===========================>')
 
     if (!player) throw new ForbiddenError(`You are not part of this game`)
+    console.log('<===========================> 55555555555555555555555  <===========================>')
+
     if (game.status !== 'started') throw new BadRequestError(`The game is not started yet`)
-    
+    console.log('<===========================>6666666666666666666  <===========================>')
+
     const gamePlayer = (game.players[0].id === player.id ? game.players[0] : game.players[1])
+    console.log('<===========================> 777777777777777777777 <===========================>')
 
     try {
+      console.log('<===========================> 8888888888888888888 <===========================>')
+
       defend(game, gamePlayer, cardCode) 
     }
     catch { 
+      console.log('<===========================> 9999999999999999999999999999 <===========================>')
+
       takeCardFromTable(game, gamePlayer)
+
+      console.log('<===========================> takeCardFromTable has been called <===========================>')
 
       switch (game.turn) {
         case 0: game.turn = 1
           break
         case 1: game.turn = 0
       }
+      console.log('<===========================> SWITCHED TURN <===========================>')
+
     }
      
     

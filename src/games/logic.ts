@@ -69,19 +69,25 @@ export const defend = (game: Game, player: Player, cardCode) => {
 }
 
 export const takeCardFromTable = (game: Game, player: Player) => {
+  console.log('<===========================> takeCardFromTable <===========================>')
+
   player.hand.push(game.onTable[0])
+  console.log('<===========================>PUSH PUSH PUSH <===========================>')
+
   game.onTable = []
+  console.log('<===========================>GAME ON TABLE<===========================>')
+
 }
 
 export const takeCards = (game: Game) => {
   while (true) {
     if (game.deckOfCards.length == 0) break
-    if (game.players[0].hand.length <= 6) game.players[0].hand.push(<Card>game.deckOfCards.pop())
+    if (game.players[0].hand.length < 6) game.players[0].hand.push(<Card>game.deckOfCards.pop())
 
     if (game.deckOfCards.length == 0) break
-    if (game.players[1].hand.length <= 6) game.players[1].hand.push(<Card>game.deckOfCards.pop())
+    if (game.players[1].hand.length < 6) game.players[1].hand.push(<Card>game.deckOfCards.pop())
 
-    if (game.players[0].hand.length === 6 && game.players[1].hand.length === 6) break
+    if (game.players[0].hand.length >= 6 && game.players[1].hand.length >= 6) break
   }
   // return game.save()
 }
